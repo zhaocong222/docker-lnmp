@@ -1,0 +1,44 @@
+version : '3'
+services :
+   mysql :
+     build :
+        context : ~/docker/mysql
+        dockerfile : dockerfile
+     ports :
+        - "3306:3306"
+     volumes :
+        - ~/docker/mysql/data:/var/lib/mysql
+     #初始密码
+     environment :
+        - MYSQL_ROOT_PASSWORD=123456
+     container_name : mysql
+     restart : always   
+   php7 :
+     build :
+        context : ~/docker/php7
+        dockerfile : dockerfile
+     ports :
+        - "9000:9000"
+     volumes :
+        - ~/web:/usr/local/nginx/html
+        - ~/docker/php7/conf/php.ini:/usr/local/php7/lib/php.ini:ro
+     container_name : php7
+     links :
+        - mysql
+     restart : always
+   nginx : 
+     build :
+        context : ~/docker/nginx
+        dockerfile : dockerfile
+     ports :
+        - "80:80"
+        - "433:433"
+     volumes :
+        - ~/docker/nginx/logs:/usr/local/nginx/logs
+        - ~/web:/usr/local/nginx/html
+        - ~/docker/nginx/conf/nginx.conf:/usr/local/nginx/conf/nginx.conf:ro
+        - ~/docker/nginx/conf/vhost:/usr/local/nginx/conf/vhost:ro
+     container_name : nginx
+     links :
+        - php7
+     restart : always
