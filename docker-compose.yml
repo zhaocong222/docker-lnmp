@@ -42,3 +42,26 @@ services :
      links :
         - php7
      restart : always
+   phpmyadmin :
+     image : phpmyadmin/phpmyadmin
+     container_name : myadmin
+     volumes:
+        - /sessions
+     ports :
+        - 8080:80
+     environment :
+        - PMA_ARBITRARY=1
+        - TESTSUITE_PASSWORD=123456
+     depends_on :
+        - mysql
+     restart: always
+   redis :
+     image : redis
+     container_name : redis
+     volumes :
+        - ~/docker/redis/data:/data
+        - ~/docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+     ports :
+        - 6379:6379
+     command : redis-server /usr/local/etc/redis/redis.conf
+     restart: always
